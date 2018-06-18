@@ -13,6 +13,7 @@
             "email": "contact@malezhive.com"
         }
     ],
+	"minimum-stability": "dev",
 	"autoload": {
 		"psr-0":{
 			"malezhiveuser" : "src/"
