@@ -1,0 +1,21 @@
+{
+    "name": "malezhive/malezhiveuser",
+    "description": "La brique utilisateurs",
+    "require": {
+        "php": ">=5.3.0",
+        "apache/log4php": "2.3.0",
+        "doctrine/orm": "*"
+    },
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "dev team",
+            "email": "contact@malezhive.com"
+        }
+    ],
+	"autoload": {
+		"psr-0":{
+			"malezhiveuser" : "src/"
+		}
+	}
+}
