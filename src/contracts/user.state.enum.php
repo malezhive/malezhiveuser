@@ -7,13 +7,13 @@
 * @package Core
 * @subpackage CoreContracts
 */
-namespace Core\CoreContracts;
+namespace MalezHive\Contracts;
 /**
 * User states  enumeration
 * 
 * @method string[] getArray()
 */
-class StateUser {
+class UserState {
 	/**
 	* The user is unknown on the system
 	*/

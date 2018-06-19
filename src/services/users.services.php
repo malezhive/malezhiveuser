@@ -7,9 +7,9 @@
 * @package Core\CoreComponents
 * @subpackage UsersManager
 */
-namespace Core\CoreComponents\UsersManager;
+namespace MalezHive\Components\UsersManager;
 
-use Core;
+use MalezHive;
 
 /**
 * This interface provide all accessible methods on users module
@@ -67,9 +67,9 @@ class Users implements IUsers
 	*/
 	public function __construct()  
 	{
-		$bootstrap = Core\Datastorage\Bootstrap::getInstance();
+		$bootstrap = MalezHive\Datastorage\Bootstrap::getInstance();
 		$this->entityManager = $bootstrap->getEntityManager();
-		$this->userRepository = $this->entityManager->getRepository('Core\CoreContracts\User');
+		$this->userRepository = $this->entityManager->getRepository('MalezHive\Contracts\User');
 	}
 	
 	/**
@@ -78,11 +78,11 @@ class Users implements IUsers
 	* @param string $mail The user's mail 
 	* @param string $password The user's password 
 	*
-	* @return Core\CoreCommons\ServiceResponse This response contains the user object
+	* @return MalezHive\Commons\ServiceResponse This response contains the user object
 	*/
 	public function authenticate($mail, $password)
 	{
-		Core\CoreCommons\Logger::Info("Users.authenticate : Start to authenticate");
+		MalezHive\Commons\Logger::Info("Users.authenticate : Start to authenticate");
 		
 		$response = null;
 		
@@ -100,7 +100,7 @@ class Users implements IUsers
 				{
 					if($user->TestPassword1 == null)
 					{
-						Core\CoreCommons\Logger::Warning("Users.authenticate : Password check 1 failed");
+						MalezHive\Commons\Logger::Warning("Users.authenticate : Password check 1 failed");
 						$user->TestPassword1 = $password;
 						$user->ModificationDate = new \DateTime();
 						$this->entityManager->merge($user);
@@ -108,7 +108,7 @@ class Users implements IUsers
 					}
 					else if($user->TestPassword1 != null && $user->TestPassword2 == null)
 					{
-						Core\CoreCommons\Logger::Warning("Users.authenticate : Password check 2 failed");
+						MalezHive\Commons\Logger::Warning("Users.authenticate : Password check 2 failed");
 						$user->TestPassword2 = $password;
 						$user->ModificationDate = new \DateTime();
 						$this->entityManager->merge($user);
@@ -116,7 +116,7 @@ class Users implements IUsers
 					}
 					else if($user->TestPassword1 != null && $user->TestPassword2 != null && $user->TestPassword3 == null)
 					{
-						Core\CoreCommons\Logger::Warning("Users.authenticate : Password check 3 failed");
+						MalezHive\Commons\Logger::Warning("Users.authenticate : Password check 3 failed");
 						$user->TestPassword3 = $password;
 						$user->ModificationDate = new \DateTime();
 						$this->entityManager->merge($user);
@@ -124,7 +124,7 @@ class Users implements IUsers
 					}
 					else if($user->TestPassword1 != null && $user->TestPassword2 != null && $user->TestPassword3 != null)
 					{
-						Core\CoreCommons\Logger::Warning("Users.authenticate : Password check failed, user banned");
+						MalezHive\Commons\Logger::Warning("Users.authenticate : Password check failed, user banned");
 						$user->State = Core\CoreContracts\StateUser::Banned;
 						$user->LastUserAgent = $this->GetBrowserAgent();
 						$user->ModificationDate = new \DateTime();
@@ -157,15 +157,15 @@ class Users implements IUsers
 			
 			$user->Password = null;
 			
-			$response = new Core\CoreCommons\ServiceResponse($user);
+			$response = new MalezHive\Commons\ServiceResponse($user);
 			
 			$_SESSION["_" . $user->Id] = $user;
 			
-			Core\CoreCommons\Logger::Info("Users.authenticate : authentification is finished");
+			MalezHive\Commons\Logger::Info("Users.authenticate : authentification is finished");
 		}
 		catch (\Exception $ex) 
 		{
-			$response = Core\CoreCommons\ServiceResponse::CreateError($ex);
+			$response = MalezHive\Commons\ServiceResponse::CreateError($ex);
 		}
 		
 		return $response;
@@ -176,11 +176,11 @@ class Users implements IUsers
     *
     * @param integer $userId The user's identifier
     *
-    * @return Core\CoreCommons\ServiceResponse This response contains the user
+    * @return MalezHive\Commons\ServiceResponse This response contains the user
     */
     public function logout($userId)
 	{
-		Core\CoreCommons\Logger::Info("Users.logout : Start to logout #$userId");
+		MalezHive\Commons\Logger::Info("Users.logout : Start to logout #$userId");
 		
 		$response = null;
 		
@@ -202,15 +202,15 @@ class Users implements IUsers
 			
 			$user->Password = null;
 			
-			$response = new Core\CoreCommons\ServiceResponse(true);
+			$response = new MalezHive\Commons\ServiceResponse(true);
 			
 			$_SESSION["_" . $user->Id] = null;
 			
-			Core\CoreCommons\Logger::Info("Users.logout : Logout is finished");
+			MalezHive\Commons\Logger::Info("Users.logout : Logout is finished");
 		}
 		catch (\Exception $ex) 
 		{
-			$response = Core\CoreCommons\ServiceResponse::CreateError($ex);
+			$response = MalezHive\Commons\ServiceResponse::CreateError($ex);
 		}
 		
 		return $response;
@@ -219,11 +219,11 @@ class Users implements IUsers
 	/**
 	* Get all users
 	*
-	* @return Core\CoreCommons\ServiceResponse This response contains all users
+	* @return MalezHive\Commons\ServiceResponse This response contains all users
 	*/
 	public function getUsers()
 	{
-		Core\CoreCommons\Logger::Info("Users.getUsers : Start to get users");
+		MalezHive\Commons\Logger::Info("Users.getUsers : Start to get users");
 		
 		$response = null;
 		
@@ -236,7 +236,7 @@ class Users implements IUsers
 			{
 				if(isset($user->LogoExtension) && is_null($user->LogoExtension) ==  false)
 				{
-					$parameters = Core\CoreCommons\Parameters::Singleton();
+					$parameters = MalezHive\Commons\Parameters::Singleton();
 					$rootSite = $parameters::Get("rootsite");
 					$documentsrootpath = $parameters::Get("documentsrootpath");
 					$name = 'logocompany.' . $user->LogoExtension;
@@ -246,7 +246,7 @@ class Users implements IUsers
 				}
 				else 
 				{
-					$parameters = Core\CoreCommons\Parameters::Singleton();
+					$parameters = MalezHive\Commons\Parameters::Singleton();
 					$rootSite = $parameters::Get("rootsite");
 					$documentsrootpath = $parameters::Get("documentsrootpath");
 					$name = 'nologo.png';
@@ -258,13 +258,13 @@ class Users implements IUsers
 				array_push($filtered, $user);
 			}
 			
-			$response = new Core\CoreCommons\ServiceResponse($filtered);
+			$response = new MalezHive\Commons\ServiceResponse($filtered);
 
-			Core\CoreCommons\Logger::Info("Users.getUsers : Get all users is finished");
+			MalezHive\Commons\Logger::Info("Users.getUsers : Get all users is finished");
 		}
 		catch (\Exception $ex) 
 		{
-			$response = Core\CoreCommons\ServiceResponse::CreateError($ex);
+			$response = MalezHive\Commons\ServiceResponse::CreateError($ex);
 		}
 		
 		return $response;
@@ -273,11 +273,11 @@ class Users implements IUsers
 	/**
 	* Get all administrators
 	*
-	* @return Core\CoreCommons\ServiceResponse This response contains all administrators
+	* @return MalezHive\Commons\ServiceResponse This response contains all administrators
 	*/
 	public function getAdministrators()
 	{
-		Core\CoreCommons\Logger::Info("Users.getAdministrators : Start to get all administrators");
+		MalezHive\Commons\Logger::Info("Users.getAdministrators : Start to get all administrators");
 		
 		$response = null;
 		
@@ -285,13 +285,13 @@ class Users implements IUsers
 		{	
 			$administrators = $this->userRepository->findBy(array('Profile' => Core\CoreContracts\ProfileUser::Administrator));
 
-			$response = new Core\CoreCommons\ServiceResponse($administrators);
+			$response = new MalezHive\Commons\ServiceResponse($administrators);
 
-			Core\CoreCommons\Logger::Info("Users.getAdministrators : Get all administrators is finished");
+			MalezHive\Commons\Logger::Info("Users.getAdministrators : Get all administrators is finished");
 		}
 		catch (\Exception $ex) 
 		{
-			$response = Core\CoreCommons\ServiceResponse::CreateError($ex);
+			$response = MalezHive\Commons\ServiceResponse::CreateError($ex);
 		}
 		
 		return $response;
@@ -309,11 +309,11 @@ class Users implements IUsers
     * @param integer $type The user's type
 	* @param string $password The user's password
     *
-    * @return Core\CoreCommons\ServiceResponse This response contains the added user
+    * @return MalezHive\Commons\ServiceResponse This response contains the added user
     */
     public function addUser($firstname, $lastname, $email, $city, $zipcode, $pseudo, $latitude, $longitude, $profile, $password)
 	{
-		Core\CoreCommons\Logger::Info("Users.addUser : Start to add a new user $firstname, $lastname, $email, $city, $zipcode, $pseudo, $latitude, $longitude, $profile");
+		MalezHive\Commons\Logger::Info("Users.addUser : Start to add a new user $firstname, $lastname, $email, $city, $zipcode, $pseudo, $latitude, $longitude, $profile");
 		
 		$response = null;
 		
@@ -346,12 +346,12 @@ class Users implements IUsers
 			$this->entityManager->persist($user);
 			$this->entityManager->flush();
 			
-			$response = new Core\CoreCommons\ServiceResponse($user);
+			$response = new MalezHive\Commons\ServiceResponse($user);
 
-			Core\CoreCommons\Logger::Info(sprintf("Users.addUser : User %s added", $user));
+			MalezHive\Commons\Logger::Info(sprintf("Users.addUser : User %s added", $user));
 			
-			Core\CoreCommons\Logger::Info(sprintf("Users.addUser : Send a mail to the new user %s in order to inform him", $user));
-			$parameters = Core\CoreCommons\Parameters::Singleton();
+			MalezHive\Commons\Logger::Info(sprintf("Users.addUser : Send a mail to the new user %s in order to inform him", $user));
+			$parameters = MalezHive\Commons\Parameters::Singleton();
 			$rootsite = $parameters::Get("rootsite");
 			$servicebase = $parameters::Get("servicebase");
 			$facebooklink = $parameters::Get("facebooklink");
@@ -366,13 +366,13 @@ class Users implements IUsers
 			$values['#rootsite'] = $rootsite;
 			$values['#facebooklink'] = $facebooklink;
 			$values['#youtubelink'] = $youtubelink;
-			$mail = new Core\CoreCommons\Mail("NewUser", $values); 
+			$mail = new MalezHive\Commons\Mail("NewUser", $values); 
 			$mail->Send($email);
 			
 		}
 		catch (\Exception $ex) 
 		{
-			$response = Core\CoreCommons\ServiceResponse::CreateError($ex);
+			$response = MalezHive\Commons\ServiceResponse::CreateError($ex);
 		}
 		
 		return $response;
@@ -386,17 +386,17 @@ class Users implements IUsers
 	* @param string $object The user's object 
 	* @param string $message The user's message 
 	*
-	* @return Core\CoreCommons\ServiceResponse This response contains the added user
+	* @return MalezHive\Commons\ServiceResponse This response contains the added user
 	*/
 	public function sendContact($name, $email, $object, $message)
 	{
-		Core\CoreCommons\Logger::Info("Users.sendContact : Start to send contact $name, $email, $object, $message");
+		MalezHive\Commons\Logger::Info("Users.sendContact : Start to send contact $name, $email, $object, $message");
 		
 		$response = null;
 		
 		try
 		{	
-			$parameters = Core\CoreCommons\Parameters::Singleton();
+			$parameters = MalezHive\Commons\Parameters::Singleton();
 			$facebooklink = $parameters::Get("facebooklink");
 			$youtubelink = $parameters::Get("youtubelink");
 			$values = array();
@@ -406,9 +406,9 @@ class Users implements IUsers
 			$values['#message'] = $message;
 			$values['#facebooklink'] = $facebooklink;
 			$values['#youtubelink'] = $youtubelink;
-			$mail = new Core\CoreCommons\Mail("ContactForm", $values); 
+			$mail = new MalezHive\Commons\Mail("ContactForm", $values); 
 			
-			Core\CoreCommons\Logger::Info("Users.sendContact : Mail created");
+			MalezHive\Commons\Logger::Info("Users.sendContact : Mail created");
 			
 			//To administrators
 			$to = array();
@@ -419,7 +419,7 @@ class Users implements IUsers
 				array_push($to, $administrator->Email);
 			}
 			
-			Core\CoreCommons\Logger::Info(sprintf("Users.sendContact : Administrators list created %s mails", count($to)));
+			MalezHive\Commons\Logger::Info(sprintf("Users.sendContact : Administrators list created %s mails", count($to)));
 			
 			$sent = $mail->Send($to);
 			
@@ -428,13 +428,13 @@ class Users implements IUsers
 				throw new \Exception("Send_Mail_Failed");
 			}
 			
-			$response = new Core\CoreCommons\ServiceResponse($sent);
+			$response = new MalezHive\Commons\ServiceResponse($sent);
 			
-			Core\CoreCommons\Logger::Info("Users.sendContact : Send contact is finished");
+			MalezHive\Commons\Logger::Info("Users.sendContact : Send contact is finished");
 		}
 		catch (\Exception $ex) 
 		{
-			$response = Core\CoreCommons\ServiceResponse::CreateError($ex);
+			$response = MalezHive\Commons\ServiceResponse::CreateError($ex);
 		}
 		
 		return $response;
@@ -445,11 +445,11 @@ class Users implements IUsers
 	*
 	* @param string $password The user's password 
 	*
-	* @return Core\CoreCommons\ServiceResponse This response contains the validate user
+	* @return MalezHive\Commons\ServiceResponse This response contains the validate user
 	*/
 	public function validUserEmail($password)
 	{
-		Core\CoreCommons\Logger::Info("Users.validUserEmail : Start to valid user mail");
+		MalezHive\Commons\Logger::Info("Users.validUserEmail : Start to valid user mail");
 		
 		$response = null;
 		
@@ -470,13 +470,13 @@ class Users implements IUsers
 			$this->entityManager->merge($user);
 			$this->entityManager->flush();
 			
-			$response = new Core\CoreCommons\ServiceResponse($user);
+			$response = new MalezHive\Commons\ServiceResponse($user);
 			
-			Core\CoreCommons\Logger::Info("Users.validUserEmail : Valid user mail is finished");
+			MalezHive\Commons\Logger::Info("Users.validUserEmail : Valid user mail is finished");
 		}
 		catch (\Exception $ex) 
 		{
-			$response = Core\CoreCommons\ServiceResponse::CreateError($ex);
+			$response = MalezHive\Commons\ServiceResponse::CreateError($ex);
 		}
 		
 		return $response;
@@ -485,11 +485,11 @@ class Users implements IUsers
 	/**
 	* Get all profiles
 	*
-	* @return Core\CoreCommons\ServiceResponse This response contains all profiles
+	* @return MalezHive\Commons\ServiceResponse This response contains all profiles
 	*/
 	public function getProfiles()
 	{
-		Core\CoreCommons\Logger::Info("Users.getProfiles : Start to get all profiles");
+		MalezHive\Commons\Logger::Info("Users.getProfiles : Start to get all profiles");
 		
 		$response = null;
 		
@@ -497,13 +497,13 @@ class Users implements IUsers
 		{	
 			$profileUsers = new Core\CoreContracts\ProfileUser();
 			
-			$response = new Core\CoreCommons\ServiceResponse($profileUsers->getArray());
+			$response = new MalezHive\Commons\ServiceResponse($profileUsers->getArray());
 
-			Core\CoreCommons\Logger::Info("Users.getProfiles : Get all profiles is finished");
+			MalezHive\Commons\Logger::Info("Users.getProfiles : Get all profiles is finished");
 		}
 		catch (\Exception $ex) 
 		{
-			$response = Core\CoreCommons\ServiceResponse::CreateError($ex);
+			$response = MalezHive\Commons\ServiceResponse::CreateError($ex);
 		}
 		
 		return $response;
@@ -514,11 +514,11 @@ class Users implements IUsers
 	*
 	* @param int $id The user's identifier 
 	*
-	* @return Core\CoreCommons\ServiceResponse This response contains the deleted user
+	* @return MalezHive\Commons\ServiceResponse This response contains the deleted user
 	*/
 	public function deleteUser($id)
 	{
-		Core\CoreCommons\Logger::Info("Users.deleteUser : Start to delete user #$id");
+		MalezHive\Commons\Logger::Info("Users.deleteUser : Start to delete user #$id");
 		
 		$response = null;
 		
@@ -534,13 +534,13 @@ class Users implements IUsers
 			$this->entityManager->remove($user);
 			$this->entityManager->flush();
 			
-			$response = new Core\CoreCommons\ServiceResponse($user);
+			$response = new MalezHive\Commons\ServiceResponse($user);
 
-			Core\CoreCommons\Logger::Info("Users.deleteUser : User #$id deleted");
+			MalezHive\Commons\Logger::Info("Users.deleteUser : User #$id deleted");
 		}
 		catch (\Exception $ex) 
 		{
-			$response = Core\CoreCommons\ServiceResponse::CreateError($ex);
+			$response = MalezHive\Commons\ServiceResponse::CreateError($ex);
 		}
 		
 		return $response;
@@ -560,11 +560,11 @@ class Users implements IUsers
     * @param string $estimation The user's estimation
     * @param string $webaddress The user's web address
     *
-    * @return Core\CoreCommons\ServiceResponse This response contains the updated user
+    * @return MalezHive\Commons\ServiceResponse This response contains the updated user
     */
     public function updateUser($id, $firstname, $lastname, $email, $city, $pseudo, $latitude, $longitude, $profile, $password)
 	{
-		Core\CoreCommons\Logger::Info("Users.updateUser id : #$id, $firstname, $lastname, $email, $city, $pseudo, $latitude, $longitude, $profile, $password");
+		MalezHive\Commons\Logger::Info("Users.updateUser id : #$id, $firstname, $lastname, $email, $city, $pseudo, $latitude, $longitude, $profile, $password");
 		
 		$response = null;
 		
@@ -603,10 +603,10 @@ class Users implements IUsers
 			
 			$user->Password = null;
 			
-			$response = new Core\CoreCommons\ServiceResponse($user);
+			$response = new MalezHive\Commons\ServiceResponse($user);
 			
-			Core\CoreCommons\Logger::Info(sprintf("Users.updateUser : Send a mail to the user %s in order to inform him", $user));
-			$parameters = Core\CoreCommons\Parameters::Singleton();
+			MalezHive\Commons\Logger::Info(sprintf("Users.updateUser : Send a mail to the user %s in order to inform him", $user));
+			$parameters = MalezHive\Commons\Parameters::Singleton();
 			$rootsite = $parameters::Get("rootsite");
 			$facebooklink = $parameters::Get("facebooklink");
 			$youtubelink = $parameters::Get("youtubelink");
@@ -617,14 +617,14 @@ class Users implements IUsers
 			$values['#rootsite'] = $rootsite;
 			$values['#facebooklink'] = $facebooklink;
 			$values['#youtubelink'] = $youtubelink;
-			$mail = new Core\CoreCommons\Mail("UpdateUser", $values); 
+			$mail = new MalezHive\Commons\Mail("UpdateUser", $values); 
 			$mail->Send($email);
 			
-			Core\CoreCommons\Logger::Info("Users.updateUser : User #$id was updated");
+			MalezHive\Commons\Logger::Info("Users.updateUser : User #$id was updated");
 		}
 		catch (\Exception $ex) 
 		{
-			$response = Core\CoreCommons\ServiceResponse::CreateError($ex);
+			$response = MalezHive\Commons\ServiceResponse::CreateError($ex);
 		}
 		
 		return $response;
@@ -636,11 +636,11 @@ class Users implements IUsers
 	* @param int $id The unique identifier of a user
 	* @param string $newPassword The user's new password 
 	*
-	* @return Core\CoreCommons\ServiceResponse This response contains the updated user
+	* @return MalezHive\Commons\ServiceResponse This response contains the updated user
 	*/
 	public function updateUserPassword($id, $newPassword)
 	{
-		Core\CoreCommons\Logger::Info("Users.updateUserPassword : Start to update the user's password #$id, $newPassword");
+		MalezHive\Commons\Logger::Info("Users.updateUserPassword : Start to update the user's password #$id, $newPassword");
 		
 		$response = null;
 		
@@ -661,13 +661,13 @@ class Users implements IUsers
 			$this->entityManager->merge($user);
 			$this->entityManager->flush();
 			
-			$response = new Core\CoreCommons\ServiceResponse($user);
+			$response = new MalezHive\Commons\ServiceResponse($user);
 
-			Core\CoreCommons\Logger::Info("Users.updateUserPassword : User #$id was updated");
+			MalezHive\Commons\Logger::Info("Users.updateUserPassword : User #$id was updated");
 		}
 		catch (\Exception $ex) 
 		{
-			$response = Core\CoreCommons\ServiceResponse::CreateError($ex);
+			$response = MalezHive\Commons\ServiceResponse::CreateError($ex);
 		}
 		
 		return $response;
@@ -678,11 +678,11 @@ class Users implements IUsers
 	*
 	* @param int $userid The user unique identifier
 	*
-	* @return Core\CoreCommons\ServiceResponse This response contains the user object or null
+	* @return MalezHive\Commons\ServiceResponse This response contains the user object or null
 	*/
 	public function resetUserPassword($userid)
 	{
-		Core\CoreCommons\Logger::Info("Users.resetUserPassword : Start to reset the user's password #$userid");
+		MalezHive\Commons\Logger::Info("Users.resetUserPassword : Start to reset the user's password #$userid");
 		
 		$response = null;
 		
@@ -708,12 +708,12 @@ class Users implements IUsers
 			$this->entityManager->merge($user);
 			$this->entityManager->flush();
 			
-			$response = new Core\CoreCommons\ServiceResponse($user);
+			$response = new MalezHive\Commons\ServiceResponse($user);
 
-			Core\CoreCommons\Logger::Info("Users.resetUserPassword : User #$userid password was updated");
+			MalezHive\Commons\Logger::Info("Users.resetUserPassword : User #$userid password was updated");
 			
-			Core\CoreCommons\Logger::Info(sprintf("Users.resetUserPassword : Send a mail to user %s in order to inform him about resetting password", $user));
-			$parameters = Core\CoreCommons\Parameters::Singleton();
+			MalezHive\Commons\Logger::Info(sprintf("Users.resetUserPassword : Send a mail to user %s in order to inform him about resetting password", $user));
+			$parameters = MalezHive\Commons\Parameters::Singleton();
 			$facebooklink = $parameters::Get("facebooklink");
 			$youtubelink = $parameters::Get("youtubelink");
 			$servicebase = $parameters::Get("servicebase");
@@ -725,12 +725,12 @@ class Users implements IUsers
 			$values['#servicebase'] = $servicebase;
 			$values['#facebooklink'] = $facebooklink;
 			$values['#youtubelink'] = $youtubelink;
-			$mail = new Core\CoreCommons\Mail("ResetUserPassword", $values); 
+			$mail = new MalezHive\Commons\Mail("ResetUserPassword", $values); 
 			$mail->Send($user->Email);
 		}
 		catch (\Exception $ex) 
 		{
-			$response = Core\CoreCommons\ServiceResponse::CreateError($ex);
+			$response = MalezHive\Commons\ServiceResponse::CreateError($ex);
 		}
 		
 		return $response;
@@ -741,11 +741,11 @@ class Users implements IUsers
 	*
 	* @param string $email The user's email address 
 	*
-	* @return Core\CoreCommons\ServiceResponse This response contains the user
+	* @return MalezHive\Commons\ServiceResponse This response contains the user
 	*/
 	public function getUserByEmail($email)
 	{
-		Core\CoreCommons\Logger::Info("Users.getUserByEmail : Start to get user by email address $email");
+		MalezHive\Commons\Logger::Info("Users.getUserByEmail : Start to get user by email address $email");
 		
 		$response = null;
 		
@@ -753,13 +753,13 @@ class Users implements IUsers
 		{	
 			$user = $this->userRepository->findOneBy(array('Email' => $email));
 
-			$response = new Core\CoreCommons\ServiceResponse($user);
+			$response = new MalezHive\Commons\ServiceResponse($user);
 
-			Core\CoreCommons\Logger::Info("Users.getUserByEmail : User $email loaded ");
+			MalezHive\Commons\Logger::Info("Users.getUserByEmail : User $email loaded ");
 		}
 		catch (\Exception $ex) 
 		{
-			$response = Core\CoreCommons\ServiceResponse::CreateError($ex);
+			$response = MalezHive\Commons\ServiceResponse::CreateError($ex);
 		}
 		
 		return $response;
@@ -770,11 +770,11 @@ class Users implements IUsers
 	*
 	* @param int $id The user's identifier 
 	*
-	* @return Core\CoreCommons\ServiceResponse This response contains the user
+	* @return MalezHive\Commons\ServiceResponse This response contains the user
 	*/
 	public function getUser($id)
 	{
-		Core\CoreCommons\Logger::Info("Users.getUser : Start to get user by id #$id");
+		MalezHive\Commons\Logger::Info("Users.getUser : Start to get user by id #$id");
 		
 		$response = null;
 		
@@ -787,13 +787,13 @@ class Users implements IUsers
 				throw new \Exception("User_Unknown");
 			}
 
-			$response = new Core\CoreCommons\ServiceResponse($user);
+			$response = new MalezHive\Commons\ServiceResponse($user);
 
-			Core\CoreCommons\Logger::Info("Users.getUser : User #$id loaded");
+			MalezHive\Commons\Logger::Info("Users.getUser : User #$id loaded");
 		}
 		catch (\Exception $ex) 
 		{
-			$response = Core\CoreCommons\ServiceResponse::CreateError($ex);
+			$response = MalezHive\Commons\ServiceResponse::CreateError($ex);
 		}
 		
 		return $response;
@@ -804,11 +804,11 @@ class Users implements IUsers
 	*
 	* @param string $mail The user's mail 
 	*
-	* @return Core\CoreCommons\ServiceResponse This response contains the user
+	* @return MalezHive\Commons\ServiceResponse This response contains the user
 	*/
 	public function generateNewPassword($email)
 	{
-		Core\CoreCommons\Logger::Info("Users.generateNewPassword : Start to generate a new password for $email");
+		MalezHive\Commons\Logger::Info("Users.generateNewPassword : Start to generate a new password for $email");
 		
 		$response = null;
 		
@@ -834,12 +834,12 @@ class Users implements IUsers
 			$this->entityManager->merge($user);
 			$this->entityManager->flush();
 
-			$response = new Core\CoreCommons\ServiceResponse($user);
+			$response = new MalezHive\Commons\ServiceResponse($user);
 			
-			Core\CoreCommons\Logger::Info("Users.generateNewPassword : User $email password was updated");
+			MalezHive\Commons\Logger::Info("Users.generateNewPassword : User $email password was updated");
 			
-			Core\CoreCommons\Logger::Info(sprintf("Users.generateNewPassword : Send a mail to user %s in order to inform him about resetting password", $user));
-			$parameters = Core\CoreCommons\Parameters::Singleton();
+			MalezHive\Commons\Logger::Info(sprintf("Users.generateNewPassword : Send a mail to user %s in order to inform him about resetting password", $user));
+			$parameters = MalezHive\Commons\Parameters::Singleton();
 			$facebooklink = $parameters::Get("facebooklink");
 			$youtubelink = $parameters::Get("youtubelink");
 			$servicebase = $parameters::Get("servicebase");
@@ -851,15 +851,15 @@ class Users implements IUsers
 			$values['#servicebase'] = $servicebase;
 			$values['#facebooklink'] = $facebooklink;
 			$values['#youtubelink'] = $youtubelink;
-			$mail = new Core\CoreCommons\Mail("ResetUserPassword", $values); 
+			$mail = new MalezHive\Commons\Mail("ResetUserPassword", $values); 
 			$mail->Send($user->Email);
 			
 
-			Core\CoreCommons\Logger::Info("Users.generateNewPassword : New password generated");
+			MalezHive\Commons\Logger::Info("Users.generateNewPassword : New password generated");
 		}
 		catch (\Exception $ex) 
 		{
-			$response = Core\CoreCommons\ServiceResponse::CreateError($ex);
+			$response = MalezHive\Commons\ServiceResponse::CreateError($ex);
 		}
 		
 		return $response;
@@ -872,11 +872,11 @@ class Users implements IUsers
     * @param float $latitude The latitude
     * @param float $longitude The longitude
     *
-    * @return Core\CoreCommons\ServiceResponse This response contains the user
+    * @return MalezHive\Commons\ServiceResponse This response contains the user
     */
 	public function updateUserPosition($userId, $latitude, $longitude)
 	{
-		Core\CoreCommons\Logger::Info("Users.updateUserPosition : Start to set user position #$userId");
+		MalezHive\Commons\Logger::Info("Users.updateUserPosition : Start to set user position #$userId");
 		
 		$response = null;
 		
@@ -896,13 +896,13 @@ class Users implements IUsers
 			$this->entityManager->merge($user);
 			$this->entityManager->flush();
 
-			$response = new Core\CoreCommons\ServiceResponse($user);
+			$response = new MalezHive\Commons\ServiceResponse($user);
 
-			Core\CoreCommons\Logger::Info("Users.updateUserPosition : User position #$userId updated");
+			MalezHive\Commons\Logger::Info("Users.updateUserPosition : User position #$userId updated");
 		}
 		catch (\Exception $ex) 
 		{
-			$response = Core\CoreCommons\ServiceResponse::CreateError($ex);
+			$response = MalezHive\Commons\ServiceResponse::CreateError($ex);
 		}
 		
 		return $response;
@@ -912,11 +912,11 @@ class Users implements IUsers
 	/**
     * Get user states
     *
-    * @return Core\CoreCommons\ServiceResponse This response contains the user
+    * @return MalezHive\Commons\ServiceResponse This response contains the user
     */
     public function getUserStates()
 	{
-		Core\CoreCommons\Logger::Info("Users.getUserStates : Start to get all user states");
+		MalezHive\Commons\Logger::Info("Users.getUserStates : Start to get all user states");
 		
 		$response = null;
 		
@@ -924,13 +924,13 @@ class Users implements IUsers
 		{	
 			$stateUser = new Core\CoreContracts\StateUser();
 			
-			$response = new Core\CoreCommons\ServiceResponse($stateUser->getArray());
+			$response = new MalezHive\Commons\ServiceResponse($stateUser->getArray());
 
-			Core\CoreCommons\Logger::Info("Users.getUserStates : Get all user states is finished");
+			MalezHive\Commons\Logger::Info("Users.getUserStates : Get all user states is finished");
 		}
 		catch (\Exception $ex) 
 		{
-			$response = Core\CoreCommons\ServiceResponse::CreateError($ex);
+			$response = MalezHive\Commons\ServiceResponse::CreateError($ex);
 		}
 		
 		return $response;
@@ -939,11 +939,11 @@ class Users implements IUsers
 	/**
     * send Validation Mail
     *
-    * @return Core\CoreCommons\ServiceResponse This response contains the user
+    * @return MalezHive\Commons\ServiceResponse This response contains the user
     */
     public function sendValidationMail($userId)
 	{
-		Core\CoreCommons\Logger::Info("Users.sendValidationMail : Start to add a new validation mail for #$userId");
+		MalezHive\Commons\Logger::Info("Users.sendValidationMail : Start to add a new validation mail for #$userId");
 		
 		$response = null;
 		
@@ -965,10 +965,10 @@ class Users implements IUsers
 			$this->entityManager->merge($user);
 			$this->entityManager->flush();
 			
-			$response = new Core\CoreCommons\ServiceResponse($user);
+			$response = new MalezHive\Commons\ServiceResponse($user);
 
-			Core\CoreCommons\Logger::Info(sprintf("Users.sendValidationMail : Send a mail to the user %s in order to inform him", $user));
-			$parameters = Core\CoreCommons\Parameters::Singleton();
+			MalezHive\Commons\Logger::Info(sprintf("Users.sendValidationMail : Send a mail to the user %s in order to inform him", $user));
+			$parameters = MalezHive\Commons\Parameters::Singleton();
 			$rootsite = $parameters::Get("rootsite");
 			$servicebase = $parameters::Get("servicebase");
 			$facebooklink = $parameters::Get("facebooklink");
@@ -983,12 +983,12 @@ class Users implements IUsers
 			$values['#rootsite'] = $rootsite;
 			$values['#facebooklink'] = $facebooklink;
 			$values['#youtubelink'] = $youtubelink;
-			$mail = new Core\CoreCommons\Mail("NewUser", $values); 
+			$mail = new MalezHive\Commons\Mail("NewUser", $values); 
 			$mail->Send($user->Email);
 		}
 		catch (\Exception $ex) 
 		{
-			$response = Core\CoreCommons\ServiceResponse::CreateError($ex);
+			$response = MalezHive\Commons\ServiceResponse::CreateError($ex);
 		}
 		
 		return $response;
@@ -999,11 +999,11 @@ class Users implements IUsers
     *
 	* @param integer $userId The user identifier
 	*
-    * @return Core\CoreCommons\ServiceResponse This response contains the user
+    * @return MalezHive\Commons\ServiceResponse This response contains the user
     */
     public function unBanUser($userId)
 	{
-		Core\CoreCommons\Logger::Info("Users.unBanUser : Start to add a new validation mail for #$userId");
+		MalezHive\Commons\Logger::Info("Users.unBanUser : Start to add a new validation mail for #$userId");
 		
 		$response = null;
 		
@@ -1023,10 +1023,10 @@ class Users implements IUsers
 			$this->entityManager->merge($user);
 			$this->entityManager->flush();
 
-			$response = new Core\CoreCommons\ServiceResponse($user);
+			$response = new MalezHive\Commons\ServiceResponse($user);
 
-			Core\CoreCommons\Logger::Info(sprintf("Users.unBanUser : Send a mail to the user %s in order to inform him", $user));
-			$parameters = Core\CoreCommons\Parameters::Singleton();
+			MalezHive\Commons\Logger::Info(sprintf("Users.unBanUser : Send a mail to the user %s in order to inform him", $user));
+			$parameters = MalezHive\Commons\Parameters::Singleton();
 			$rootsite = $parameters::Get("rootsite");
 			$servicebase = $parameters::Get("servicebase");
 			$facebooklink = $parameters::Get("facebooklink");
@@ -1041,12 +1041,12 @@ class Users implements IUsers
 			$values['#rootsite'] = $rootsite;
 			$values['#facebooklink'] = $facebooklink;
 			$values['#youtubelink'] = $youtubelink;
-			$mail = new Core\CoreCommons\Mail("UnBanUser", $values); 
+			$mail = new MalezHive\Commons\Mail("UnBanUser", $values); 
 			$mail->Send($user->Email);
 		}
 		catch (\Exception $ex) 
 		{
-			$response = Core\CoreCommons\ServiceResponse::CreateError($ex);
+			$response = MalezHive\Commons\ServiceResponse::CreateError($ex);
 		}
 		
 		return $response;
@@ -1083,12 +1083,12 @@ class Users implements IUsers
 	
 	private function GetBrowserAgent()
 	{
-		Core\CoreCommons\Logger::Info("Users.GetBrowserAgent : Start to get the browser name");
+		MalezHive\Commons\Logger::Info("Users.GetBrowserAgent : Start to get the browser name");
 		
 		$userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
 		$result = null;
 		
-		Core\CoreCommons\Logger::Debug("Users.GetBrowserAgent : The user agent is " . serialize($userAgent));
+		MalezHive\Commons\Logger::Debug("Users.GetBrowserAgent : The user agent is " . serialize($userAgent));
 		
 		if(is_null($userAgent) == false)
 		{
@@ -1130,10 +1130,10 @@ class Users implements IUsers
 		else
 		{
 			$result = 'Unknown';
-			Core\CoreCommons\Logger::Info("Users.GetBrowserAgent : The browser name is not detectable");
+			MalezHive\Commons\Logger::Info("Users.GetBrowserAgent : The browser name is not detectable");
 		}
 
-		Core\CoreCommons\Logger::Info("Users.GetBrowserAgent : The browser name detected is $result");
+		MalezHive\Commons\Logger::Info("Users.GetBrowserAgent : The browser name detected is $result");
 
 		return $result;
 	}

@@ -7,7 +7,7 @@
 * @package Core\CoreComponents
 * @subpackage UsersManager
 */
-namespace Core\CoreComponents\UsersManager;
+namespace MalezHive\Components\UsersManager;
 
 /**
 * This interface provide all accessible methods on users module

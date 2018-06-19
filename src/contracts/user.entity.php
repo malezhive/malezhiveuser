@@ -7,9 +7,9 @@
 * @package Core
 * @subpackage CoreContracts
 */
-namespace Core\CoreContracts;
+namespace MalezHive\Contracts;
 
-use Core;
+use MalezHive;
 
 /**
 * This class defined the user object.
@@ -137,13 +137,6 @@ class User
     public $IsFirstUse;
 	
 	/**
-    * The user score
-    * @var integer
-    * @Column(type="integer")
-    */
-    public $Score;
-	
-	/**
     * The user user agent
     * @var integer
     * @Column(type="string", nullable=true)
@@ -191,7 +184,6 @@ class User
 		$this->IsFirstUse = true;
 		$this->Latitude = $latitude;
 		$this->Longitude = $longitude;
-		$this->Score = 0;
         $this->ModificationDate = new \DateTime();
         $this->CreationDate = new \DateTime();
     }

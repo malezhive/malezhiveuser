@@ -7,25 +7,29 @@
 * @package Core
 * @subpackage CoreContracts
 */
-namespace Core\CoreContracts;
+namespace MalezHive\Contracts;
 /**
 * User profiles  enumeration
 * 
 * @method string[] getArray()
 */
-class ProfileUser {
+class UserProfile {
 	/**
 	* The user is a simple user
 	*/
 	const User = 0;
 	/**
-	* The user is a municipal employee
+	* The user is a customer
 	*/
-	const Supervisor = 1;
+	const Customer = 1;
+	/**
+	* The user is an employee
+	*/
+    const Employee = 2;
 	/**
 	* The user is an administrator
 	*/
-    const Administrator = 2;
+    const Administrator = 3;
 	
 	/**
 	* Get all available user profiles
