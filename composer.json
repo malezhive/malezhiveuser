@@ -16,7 +16,7 @@
 	"minimum-stability": "dev",
 	"autoload": {
 		"psr-0":{
-			"MalezHive\Components\UsersManager" : "src/"
+			"MalezHive\\Components\\UsersManager" : "src/"
 		}
 	}
 }
