@@ -15,6 +15,9 @@
     ],
 	"minimum-stability": "dev",
 	"autoload": {
-		"classmap": ["src/"]
+		"psr-4": {
+            "MalezHive\\Components\\UsersManager\\": "src/services/",
+            "MalezHive\\Contracts\\": "src/services/contracts/"
+        }
 	}
 }
